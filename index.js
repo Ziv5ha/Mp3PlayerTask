@@ -71,7 +71,7 @@ function durationFormat(song){
 }
 
 function playSong(id) {
-  if (!(identifySong(id))) throw "No such song. try another ID."
+  if (!(identifySong(id).id)) throw "No such song. try another ID."
   else return player.playSong(identifySong(id))
 }
 
@@ -91,7 +91,7 @@ function isSongInPlaylist(id){
 }
 
 function removeSong(id) {
-  if (!(identifySong(id))) throw "No such song."
+  if (!(identifySong(id).id)) throw "No such song."
   else{
     player.songs.splice(songIndexByID(id),1)
     player.playlists[isSongInPlaylist(id)].songs.splice(songIndexInPlaylistByID(id),1)
@@ -101,6 +101,13 @@ function removeSong(id) {
 }
 
 function addSong(title, album, artist, duration, id) {
+  if ((identifySong(id).id)) throw "ID taken. try another ID."
+  while (id === undefined && !(identifySong(id).id)){              //Gerenrates a random ID based on how many songs there are in the player
+    id = Math.floor(Math.random()*10**(Math.floor(1+player.songs.length/10)))
+  }
+  duration = parseInt(duration.slice(0,Math.floor(duration.length/2)))*60+parseInt(duration.slice(Math.ceil(duration.length/2)))
+  player.songs.push({title, album, artist, duration, id})
+  return player
 }
 
 function removePlaylist(id) {
