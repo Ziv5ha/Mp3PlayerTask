@@ -137,8 +137,11 @@ function createPlaylist(name, id) {
 }
 
 function playPlaylist(id) {
-  // your code here
+  if (!(identifyPlaylist(id).id)) throw "No such playlist. try another ID."
+  let nowPlayingPlaylist = identifyPlaylist(id).songs
+  for (let i of nowPlayingPlaylist) playSong(i)
 }
+
 
 function editPlaylist(playlistId, songId) {
   // your code here
