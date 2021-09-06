@@ -48,7 +48,7 @@ const player = {
     { id: 5, name: 'Israeli', songs: [4, 5] },
   ],
   playSong(song) {
-    console.log(`Playing ${song.title} from ${song.album} by ${song.artist} | ${Math.floor(song.duration/60)}:${song.duration%60}.`)
+    console.log(`Playing ${song.title} from ${song.album} by ${song.artist} | ${durationFormat(song)}.`)
   },
 }
 
@@ -56,6 +56,18 @@ function identifySong(id){
   let song = {}
   for (let i of player.songs) if (i.id === id) {song = {id,title,album,artist,duration} = i}
   return song
+}
+
+function durationFormat(song){
+  let min = ""
+  if (Math.floor(song.duration/60)>=10) min = `${Math.floor(song.duration/60)}`
+  if (Math.floor(song.duration/60)>=1 && Math.floor(song.duration/60)<10) min = `0${Math.floor(song.duration/60)}`
+  if (Math.floor(song.duration/60)==0) min = "00"
+  let sec = ""
+  if ((song.duration%60)>=10) sec = `${song.duration%60}`
+  if ((song.duration%60)>=1 && (song.duration%60)<10) sec = `0${song.duration%60}`
+  if ((song.duration%60)==0) sec = `00`
+  return min+":"+sec
 }
 
 function playSong(id) {
@@ -89,7 +101,6 @@ function removeSong(id) {
 }
 
 function addSong(title, album, artist, duration, id) {
-  // your code here
 }
 
 function removePlaylist(id) {
