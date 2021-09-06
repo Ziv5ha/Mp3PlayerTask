@@ -48,16 +48,44 @@ const player = {
     { id: 5, name: 'Israeli', songs: [4, 5] },
   ],
   playSong(song) {
-    console.log(/* your code here */)
+    console.log(`Playing ${song.title} from ${song.album} by ${song.artist} | ${Math.floor(song.duration/60)}:${song.duration%60}.`)
   },
 }
 
+function identifySong(id){
+  let song = {}
+  for (let i of player.songs) if (i.id === id) {song = {id,title,album,artist,duration} = i}
+  return song
+}
+
 function playSong(id) {
-  // your code here
+  if (!(identifySong(id))) throw "No such song. try another ID."
+  else return player.playSong(identifySong(id))
+}
+
+
+function songIndexByID(id){
+  for (let i in player.songs) if(player.songs[i].id===id) return i
+}
+function songIndexInPlaylistByID(id){
+  for (let p in player.playlists){
+    for (let s in player.playlists[p].songs)  if (player.playlists[p].songs[s]===id) return(s)
+  } 
+}
+function isSongInPlaylist(id){
+  for (let p in player.playlists){
+    for (let s in player.playlists[p].songs)  if (player.playlists[p].songs[s]===id) return(p)
+  } 
 }
 
 function removeSong(id) {
-  // your code here
+  if (!(identifySong(id))) throw "No such song."
+  else{
+    player.songs.splice(songIndexByID(id),1)
+    player.playlists[isSongInPlaylist(id)].songs.splice(songIndexInPlaylistByID(id),1)
+    } 
+  
+  return player.songs
 }
 
 function addSong(title, album, artist, duration, id) {
