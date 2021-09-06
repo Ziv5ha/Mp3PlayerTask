@@ -194,11 +194,23 @@ function searchByQuery(query) {
   searchRsult.songs.sort(sortByTitle)
   return searchRsult
 }
-console.log(searchByQuery("a"))
+function mmssToS(duration){
+  return parseInt(duration.slice(0,duration.indexOf(":"))*60)+parseInt(duration.slice(duration.indexOf(":")+1))
+}
 
 function searchByDuration(duration) {
-  // your code here
+  let timeLength = mmssToS(duration)
+  let diffSong = timeLength
+  let diffPlaylist = timeLength
+  let songLength = 0
+  let playlistLength = 0
+  for (let song of player.songs) if (Math.abs(song.duration-timeLength)<Math.abs(diffSong)) {diffSong=Math.abs(song.duration-timeLength); songLength = song.duration}
+  for (let playlist of player.playlists) if (Math.abs(playlistDuration(playlist.id)-timeLength)<Math.abs(diffPlaylist)) {diffPlaylist=Math.abs(playlistDuration(playlist.id)-timeLength); playlistLength = playlistDuration(playlist.id)}
+  for (let i of player.songs) if (i.duration === songLength && diffSong<diffPlaylist) return i
+  for (let i of player.playlists) if (playlistDuration(i.id) === playlistLength && diffSong>diffPlaylist) return i
 }
+
+console.log(searchByDuration("4:23"))
 
 module.exports = {
   player,
