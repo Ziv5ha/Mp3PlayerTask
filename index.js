@@ -75,15 +75,16 @@ function playSong(id) {
   else return player.playSong(identifySong(id))
 }
 
-
 function songIndexByID(id){
   for (let i in player.songs) if(player.songs[i].id===id) return i
 }
+
 function songIndexInPlaylistByID(id){
   for (let p in player.playlists){
     for (let s in player.playlists[p].songs)  if (player.playlists[p].songs[s]===id) return(s)
   } 
 }
+
 function isSongInPlaylist(id){
   for (let p in player.playlists){
     for (let s in player.playlists[p].songs)  if (player.playlists[p].songs[s]===id) return(p)
@@ -110,8 +111,20 @@ function addSong(title, album, artist, duration, id) {
   return player
 }
 
+function identifyPlaylist(id){
+  let playlist = {}
+  for (let i of player.playlists) if (i.id === id) {playlist = {id,title,album,artist,duration} = i}
+  return playlist
+}
+
+function playlistIndexByID(id){
+  for (let i in player.playlists) if(player.playlists[i].id===id) return i
+}
+
 function removePlaylist(id) {
-  // your code here
+  if (!(identifyPlaylist(id).id)) throw "No such playlist."
+  else player.playlists.splice(playlistIndexByID(id),1)
+  return player.playlists
 }
 
 function createPlaylist(name, id) {
