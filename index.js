@@ -128,7 +128,12 @@ function removePlaylist(id) {
 }
 
 function createPlaylist(name, id) {
-  // your code here
+  if ((identifyPlaylist(id).id)) throw "ID taken. try another ID."
+  while (id === undefined && !(identifyPlaylist(id).id)){              //Gerenrates a random ID based on how many songs there are in the player
+    id = Math.floor(Math.random()*10**(Math.floor(1+player.songs.length/10)))
+  }
+  player.playlists.push({name, id, songs:[]})
+  return player
 }
 
 function playPlaylist(id) {
