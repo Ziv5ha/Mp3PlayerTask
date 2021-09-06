@@ -58,6 +58,14 @@ function identifySong(id){
   return song
 }
 
+function checkSong(id){
+  if (!(identifySong(id).id)) throw "No such song. try another ID."
+}
+
+function checkPlaylist(id){
+  if (!(identifyPlaylist(id).id)) throw "No such playlist. try another ID."
+}
+
 function durationFormat(song){
   let min = ""
   if (Math.floor(song.duration/60)>=10) min = `${Math.floor(song.duration/60)}`
@@ -71,8 +79,8 @@ function durationFormat(song){
 }
 
 function playSong(id) {
-  if (!(identifySong(id).id)) throw "No such song. try another ID."
-  else return player.playSong(identifySong(id))
+  checkSong(id)
+  return player.playSong(identifySong(id))
 }
 
 function songIndexByID(id){
@@ -92,12 +100,9 @@ function isSongInPlaylist(id){
 }
 
 function removeSong(id) {
-  if (!(identifySong(id).id)) throw "No such song."
-  else{
-    player.songs.splice(songIndexByID(id),1)
-    player.playlists[isSongInPlaylist(id)].songs.splice(songIndexInPlaylistByID(id),1)
-    } 
-  
+  checkSong(id)
+  player.songs.splice(songIndexByID(id),1)
+  player.playlists[isSongInPlaylist(id)].songs.splice(songIndexInPlaylistByID(id),1) 
   return player.songs
 }
 
@@ -137,14 +142,17 @@ function createPlaylist(name, id) {
 }
 
 function playPlaylist(id) {
-  if (!(identifyPlaylist(id).id)) throw "No such playlist. try another ID."
+  checkPlaylist(id)
   let nowPlayingPlaylist = identifyPlaylist(id).songs
   for (let i of nowPlayingPlaylist) playSong(i)
 }
 
-
 function editPlaylist(playlistId, songId) {
-  // your code here
+  checkSong(songId)
+  checkPlaylist(playlistId)
+  if (isSongInPlaylist(songId) === playlistIndexByID(playlistId)) player.playlists[playlistIndexByID(playlistId)].songs.splice(songIndexInPlaylistByID(songId),1)
+  else player.playlists[playlistIndexByID(playlistId)].songs.push(songId)
+  if (player.playlists[playlistIndexByID(playlistId)].songs.length === 0) player.playlists.splice(playlistIndexByID(playlistId),1)
 }
 
 function playlistDuration(id) {
