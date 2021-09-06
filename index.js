@@ -163,11 +163,38 @@ function playlistDuration(id) {
   }
   return time
 }
-console.log(playlistDuration(1))
+
+function removeDoubleSearchResult(result, searchRsult){
+  let double = 0
+  for (let i of searchRsult.songs) if (i.id === result.id) double++
+  if (double > 0) return false
+  return true
+}
+
+function sortByTitle(a,b){
+  if ( a.title < b.title ){
+    return -1;
+  }
+  if ( a.title > b.title ){
+    return 1;
+  }
+  return 0;
+}
 
 function searchByQuery(query) {
-  // your code here
+  query = query.toLowerCase()
+  let searchRsult = {playlists:[], songs:[]}
+  for (let song of player.songs){
+    for (let i in song) if (`${song[i]}`.toLowerCase().includes(query)&& removeDoubleSearchResult(song, searchRsult)) searchRsult.songs.push(song)
+  }
+  for (let playlist of player.playlists){
+    for (let i in playlist) if (`${playlist[i]}`.toLowerCase().includes(query)) searchRsult.playlists.push(playlist)
+  }
+  if (searchRsult.playlists===[]&&searchRsult.songs===[])return "Nothing found"
+  searchRsult.songs.sort(sortByTitle)
+  return searchRsult
 }
+console.log(searchByQuery("a"))
 
 function searchByDuration(duration) {
   // your code here
