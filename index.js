@@ -48,7 +48,7 @@ const player = {
     { id: 5, name: 'Israeli', songs: [4, 5] },
   ],
   playSong(song) {
-    console.log(`Playing ${song.title} from ${song.album} by ${song.artist} | ${durationFormat(song)}.`)
+    console.log(`Playing ${song.title} from ${song.album} by ${song.artist} | ${durationFormat(song.duration)}.`)
   },
 }
 
@@ -66,15 +66,15 @@ function checkPlaylist(id){
   if (!(identifyPlaylist(id).id)) throw "No such playlist. try another ID."
 }
 
-function durationFormat(song){
+function durationFormat(duration){
   let min = ""
-  if (Math.floor(song.duration/60)>=10) min = `${Math.floor(song.duration/60)}`
-  if (Math.floor(song.duration/60)>=1 && Math.floor(song.duration/60)<10) min = `0${Math.floor(song.duration/60)}`
-  if (Math.floor(song.duration/60)==0) min = "00"
+  if (Math.floor(duration/60)>=10) min = `${Math.floor(duration/60)}`
+  if (Math.floor(duration/60)>=1 && Math.floor(duration/60)<10) min = `0${Math.floor(duration/60)}`
+  if (Math.floor(duration/60)==0) min = "00"
   let sec = ""
-  if ((song.duration%60)>=10) sec = `${song.duration%60}`
-  if ((song.duration%60)>=1 && (song.duration%60)<10) sec = `0${song.duration%60}`
-  if ((song.duration%60)==0) sec = `00`
+  if ((duration%60)>=10) sec = `${duration%60}`
+  if ((duration%60)>=1 && (duration%60)<10) sec = `0${duration%60}`
+  if ((duration%60)==0) sec = `00`
   return min+":"+sec
 }
 
@@ -156,8 +156,14 @@ function editPlaylist(playlistId, songId) {
 }
 
 function playlistDuration(id) {
-  // your code here
+  checkPlaylist(id)
+  let time=0
+  for (let s of identifyPlaylist(id).songs){
+    time += identifySong(s).duration
+  }
+  return time
 }
+console.log(playlistDuration(1))
 
 function searchByQuery(query) {
   // your code here
