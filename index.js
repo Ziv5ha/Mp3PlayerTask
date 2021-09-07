@@ -54,39 +54,42 @@ const player = {
 
 
 // -~-~-~-~-~- Identifiers -~-~-~-~-~- //
-function identifySong(id){                    //identify a song in the player and returns all the information about it
+function identifySong(id){                                  //identify a song in the player and returns all the information about it
   let song = {}
   for (let i of player.songs) if (i.id === id) {song = {id,title,album,artist,duration} = i}
   return song
 }
-function identifyPlaylist(id){                //identify a playlist in the player and returns all the information about it
+function identifyPlaylist(id){                              //identify a playlist in the player and returns all the information about it
   let playlist = {}
   for (let i of player.playlists) if (i.id === id) {playlist = {id,title,album,artist,duration} = i}
   return playlist
 }
-function songIndexByID(id){                   //I forgot that .indexOf is a function in JavaScript 
+function songIndexByID(id){                                 //I forgot that .indexOf is a function in JavaScript 
   for (let i in player.songs) if(player.songs[i].id===id) return i
 }
-function songIndexInPlaylistByID(id){         //I forgot that .indexOf is a function in JavaScript
+function songIndexInPlaylistByID(id){                       //I forgot that .indexOf is a function in JavaScript
   for (let p in player.playlists){
     for (let s in player.playlists[p].songs)  if (player.playlists[p].songs[s]===id) return(s)
   } 
 }
-function playlistIndexByID(id){               //I forgot that .indexOf is a function in JavaScript
+function playlistIndexByID(id){                             //I forgot that .indexOf is a function in JavaScript
   for (let i in player.playlists) if(player.playlists[i].id===id) return i
 }
 
 // -~-~-~-~-~- Conformations -~-~-~-~-~- //
-function checkSong(id){           //Checks if the song exists in the player
+function checkSong(id){                                     //Checks if the given song exists in the player
   if (!(identifySong(id).id)) throw "No such song. try another ID."
 }
-function checkPlaylist(id){       //Checks if the playlist exists in the player
+function checkPlaylist(id){                                 //Checks if the given playlist exists in the player
   if (!(identifyPlaylist(id).id)) throw "No such playlist. try another ID."
 }
-function isSongInPlaylist(id){    //Checks if the song is in a playlist
+function isSongInPlaylist(id){                              //Checks if the given song is in a playlist
   for (let p in player.playlists){
     for (let s in player.playlists[p].songs)  if (player.playlists[p].songs[s]===id) return(p)
   } 
+}
+function idSongInThisPlaylist(singId, playlistId){          //Checks if the gien song is in the given playlist
+  for (let s in player.playlists[playlistIndexByID(playlistId)].songs)  if (player.playlists[playlistIndexByID(playlistId)].songs[s]===singId) return true
 }
 
 // -~-~-~-~-~- Utilities -~-~-~-~-~- //
@@ -113,6 +116,7 @@ function durationFormat(duration){                          //Subfunction to con
   if ((duration%60)==0) sec = `00`
   return min+":"+sec
 }
+
 
 // -~-~-~-~-~- Main Taks Functions -~-~-~-~-~- //
 function playSong(id) {
@@ -185,7 +189,7 @@ function searchByQuery(query) {
   for (let playlist of player.playlists){      //Sreaching in query in every playlist. Playlists can't have the same name.
     for (let i in playlist) if (`${playlist[i]}`.toLowerCase().includes(query)) searchRsult.playlists.push(playlist)
   }
-  if (searchRsult.playlists===[]&&searchRsult.songs===[])return "Nothing found"
+  if (searchRsult.playlists.length===0&&searchRsult.songs.length===0)return "Nothing found"
   searchRsult.songs.sort(sortByTitle)
   return searchRsult
 }
@@ -205,6 +209,44 @@ function searchByDuration(duration) {
   for (let i of player.playlists) if (playlistDuration(i.id) === playlistLength && diffSong>diffPlaylist) return i
   //If a playlist's duration is closer to the given duration than a song's duration. This line returns that playlist's details
 }
+
+// -~-~-~-~-~- Bonus Functions -~-~-~-~-~- //
+function playAll(){
+  for (let s of player.songs) playSong(s.id)
+}
+function playRandomSong(){
+  let id;
+  do {id = Math.floor(Math.random()*10**(Math.floor(1+player.songs.length/10)))} //Gerenrates a random ID based on how many songs there are in the player
+  while (!(identifySong(id).id))
+  return playSong(identifySong(id).id)
+}
+function playPlaylistInRandomOrder(playlistId){
+  let queue = []
+  let id;
+  while (queue.length<player.playlists[playlistIndexByID(playlistId)].songs.length){
+    do {
+      id = Math.floor(Math.random()*10**(Math.floor(1+player.playlists[playlistIndexByID(playlistId)].songs.length/10)))
+      if (!(`${queue}`.includes(id))&&idSongInThisPlaylist(id, playlistId)) {playSong(id);queue.push(id)}
+    }
+    while (!idSongInThisPlaylist(id, playlistId))
+  }
+  return queue
+}
+function playAllInRandomOrder(){
+  let queue = []
+  let id;
+  while (queue.length<player.songs.length){
+    do {
+      id = Math.floor(Math.random()*10**(Math.floor(1+player.songs.length/10)))
+      if (!(`${queue}`.includes(id))&&identifySong(id).id) {playSong(id);queue.push(id)}
+    }
+    while (!(identifySong(id).id))
+  }
+  return queue
+}
+
+console.log(searchByQuery("id"))
+
 
 module.exports = {
   player,
